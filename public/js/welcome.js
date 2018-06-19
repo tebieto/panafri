@@ -22,3 +22,47 @@ showmenu.classList.remove('hidden')
 hidemenu.classList.add('hidden')
 
 }
+
+function showSearchModal() {
+	
+var searchModal = document.getElementById('search-page')	
+searchModal.classList.remove('hidden')	
+	
+}
+
+
+function verifyPassword() {
+	
+var searchModal = document.getElementById('search-page')	
+searchModal.classList.remove('hidden')	
+	
+}
+
+
+function hideSearchModal() {
+	
+var searchModal = document.getElementById('search-page')	
+searchModal.classList.add('hidden')	
+	
+}
+
+function startSellingModal() {
+	
+var startSelling = document.getElementById('start-selling')	
+startSelling.classList.remove('hidden')
+
+}
+
+function hideStartSellingModal() {
+	
+var startSelling = document.getElementById('start-selling')	
+startSelling.classList.add('hidden')
+
+}
+
+function sayHi() {
+	
+	console.log('hi')
+	
+}
+	
