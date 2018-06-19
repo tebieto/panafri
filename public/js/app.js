@@ -1175,7 +1175,7 @@ var app = new Vue({
 		hideFreeLanceModal: function hideFreeLanceModal() {
 
 			var freeLance = document.getElementById('freelance-delivery');
-			freeLance.classList.remove('hidden');
+			freeLance.classList.add('hidden');
 		}
 	}
 });

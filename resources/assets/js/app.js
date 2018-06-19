@@ -128,12 +128,13 @@ freeLance.classList.remove('hidden')
 
 },
 
-
-hideFreeLanceModal() {
+hideFreeLanceModal(){
 	
 var freeLance = document.getElementById('freelance-delivery')	
-freeLance.classList.remove('hidden')	
+freeLance.classList.add('hidden')	
 }
+
+
 	
 		
 		
