@@ -333,7 +333,7 @@
 		<a href="http://panafri.com">  <img class="panafri-logo"  width="150px" height="auto" src="{{Storage::url('public/icons/panafri-logo.png')}}" alt="Panafri logo"></a>
 	 </div>
 	 <div class="form-message">
-	When you register, we give you a dashboard to manage your transactions. You can also earn extra money by working as a freelance distributor.
+	When you register, we give you a dashboard to manage your transactions in realtime. You can also earn money by working as a freelance distributor. 
 	 </div>
 	  <form class="start-selling-form" method="POST" action="{{ route('register') }}">
                         {{ csrf_field() }}
@@ -440,86 +440,8 @@
 	 
 	  <!--End of register class div-->
 	  
-	
-	 <!--Begin welcome-login class div-->
-
-	
-	 <div id="welcome-login" 
-	 class="start-selling {{old('login') ? ' ' : 'hidden' }}" @click="hideWelcomeLoginModal()">
-	
-	 
-	 <!--Begin form-container class div-->	
-	  <div class="close">
-		x
-	 </div>
-	 
-	 <div class="form-container" @click.stop >
-	
-	 <div class="logo">
-			
-		<a href="http://panafri.com">  <img class="panafri-logo"  width="150px" height="auto" src="{{Storage::url('public/icons/panafri-logo.png')}}" alt="Panafri logo"></a>
-	 </div>
-	 <div class="form-message">
-	 When you login, you can buy and sell goods and services with people nearby in realtime right from your dashboard. You can also earn extra money by doing freelance delivery.
-	 </div>
-	  <form class="welcome-login-form" method="POST" action="{{ route('login') }}">
-                        {{ csrf_field() }}
-	 
-	 <table>
-	 
-	 <tr><td></td><th><h3>Private Information (<a class="learn-more">Read Data Policy</a>)</h3></th></tr>
-	 <tr>
-	 
-	 <tr>
-	 <td>Email</td>
-	 <td><input type="email" name="email"  value="{{ old('email') }}" required /></td>
-	 </tr>
-	 @if ($errors->has('email'))
-     <tr>
-        <td></td><td><strong>{{ $errors->first('email') }}</strong></td>
-     </tr>
-     @endif
-
-	 <tr><td></td><th><h3>Sensitive Information (<a class="learn-more">Read Data Policy</a>)</h3></th></tr>
-	 <tr>
-	 
-	
-	 <tr>
-	 <td>Password</td>
-	 <td><input  type="password"  name="password"  value="{{ old('password') }}" required /></td>
-	 </tr>
-	 @if ($errors->has('password'))
-     <tr>
-        <td></td><td><strong>{{ $errors->first('password') }}</strong></td>
-     </tr>
-     @endif
-	 
-	 
-	 <tr>
-        <td></td><td><strong>By clicking "Login" you agree that you are over 13 years of age and you accept our <a class="learn-more">Terms of Service</a> </strong></td>
-     </tr>
-	 
-	 <tr>
-	 <td></td>
-	 <td><button type="submit">Login</button></td>
-	 </tr>
-	 
-	 
-	 </table>
-	 
-	  <input type="hidden" name="login" value="login">
-	 </form>
-	 
-	 </div>
-	 
-	 <!--End of form-container class div-->
-	 
-	 </div>
-	 
-	  <!--End of welcome-login class div-->
 	  
-	  
-	   <!--Begin start-freelance class div-->
+	   <!--Begin freelance class div-->
 
 	
 	 <div id="freelance-delivery" 
@@ -538,9 +460,9 @@
 		<a href="http://panafri.com">  <img class="panafri-logo"  width="150px" height="auto" src="{{Storage::url('public/icons/panafri-logo.png')}}" alt="Panafri logo"></a>
 	 </div>
 	 <div class="form-message">
-	 Freelancers earn money by helping sellers transport goods to their customers. To become a freelancer, you need a verified account and a free dashboard to manage your clients.
+	When you register, we give you a dashboard to manage your transactions in realtime. You can also earn money by working as a freelance distributor.
 	 </div>
-	  <form class="start-freelancing-form" method="POST" action="{{ route('register') }}">
+	  <form class="start-selling-form" method="POST" action="{{ route('register') }}">
                         {{ csrf_field() }}
 	 
 	 <table>
@@ -623,7 +545,7 @@
      @endif
 	 
 	 <tr>
-        <td></td><td><strong>By clicking "Register and Deliver" you agree that you are over 13 years of age and you accept our <a class="learn-more">Terms of Service</a> </strong></td>
+        <td></td><td><strong>By clicking "Register" you agree that you are over 13 years of age and you accept our <a class="learn-more">Terms of Service</a> </strong></td>
      </tr>
 	 
 	 <tr>
@@ -643,7 +565,87 @@
 	 
 	 </div>
 	 
-	   <!--End of start-freelance class div-->
+	  <!--End of freelance class div--> 
+	  
+	  
+	
+	 <!--Begin welcome-login class div-->
+
+	
+	 <div id="welcome-login" 
+	 class="start-selling {{old('login') ? ' ' : 'hidden' }}" @click="hideWelcomeLoginModal()">
+	
+	 
+	 <!--Begin form-container class div-->	
+	  <div class="close">
+		x
+	 </div>
+	 
+	 <div class="form-container" @click.stop >
+	
+	 <div class="logo">
+			
+		<a href="http://panafri.com">  <img class="panafri-logo"  width="150px" height="auto" src="{{Storage::url('public/icons/panafri-logo.png')}}" alt="Panafri logo"></a>
+	 </div>
+	 <div class="form-message">
+	 When you login, you can buy and sell goods and services with people nearby in realtime right from your dashboard. You can also earn extra money by doing freelance delivery.
+	 </div>
+	  <form class="welcome-login-form" method="POST" action="{{ route('login') }}">
+                        {{ csrf_field() }}
+	 
+	 <table>
+	 
+	 <tr><td></td><th><h3>Private Information (<a class="learn-more">Read Data Policy</a>)</h3></th></tr>
+	 <tr>
+	 
+	 <tr>
+	 <td>Email</td>
+	 <td><input type="email" name="email"  value="{{ old('email') }}" required /></td>
+	 </tr>
+	 @if ($errors->has('email'))
+     <tr>
+        <td></td><td><strong>{{ $errors->first('email') }}</strong></td>
+     </tr>
+     @endif
+
+	 <tr><td></td><th><h3>Sensitive Information (<a class="learn-more">Read Data Policy</a>)</h3></th></tr>
+	 <tr>
+	 
+	
+	 <tr>
+	 <td>Password</td>
+	 <td><input  type="password"  name="password"  value="{{ old('password') }}" required /></td>
+	 </tr>
+	 @if ($errors->has('password'))
+     <tr>
+        <td></td><td><strong>{{ $errors->first('password') }}</strong></td>
+     </tr>
+     @endif
+	 
+	 
+	 <tr>
+        <td></td><td><strong>By clicking "Login" you agree that you are over 13 years of age and you accept our <a class="learn-more">Terms of Service</a> </strong></td>
+     </tr>
+	 
+	 <tr>
+	 <td></td>
+	 <td><button type="submit">Login</button></td>
+	 </tr>
+	 
+	 
+	 </table>
+	 
+	  <input type="hidden" name="login" value="login">
+	 </form>
+	 
+	 </div>
+	 
+	 <!--End of form-container class div-->
+	 
+	 </div>
+	 
+	  <!--End of welcome-login class div-->
+	  
 	  
 	  
 	  </div>
