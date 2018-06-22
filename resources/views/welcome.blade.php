@@ -460,7 +460,7 @@
 		<a href="http://panafri.com">  <img class="panafri-logo"  width="150px" height="auto" src="{{Storage::url('public/icons/panafri-logo.png')}}" alt="Panafri logo"></a>
 	 </div>
 	 <div class="form-message">
-	When you register, we give you a dashboard to manage your transactions in realtime. You can also earn money by working as a freelance distributor.
+	You can make money by helping other sellers deliver their goods or services, Register to gain access to your personalised dashboard.
 	 </div>
 	  <form class="start-selling-form" method="POST" action="{{ route('register') }}">
                         {{ csrf_field() }}

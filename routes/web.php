@@ -18,3 +18,25 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+Route::get('/save/category/{name}', [
+	'uses' => 'HomeController@saveCategory',
+	'as' => 'category'
+	]);
+	
+Route::get('/all/categories', [
+	'uses' => 'HomeController@categories',
+	'as' => 'categories'
+	]);
+	
+Route::post('/upload/image', [
+	'uses' => 'HomeController@image',
+	'as' => 'image'
+	]);	
+	
+	
+Route::post('/submit/product', [
+	'uses' => 'HomeController@submitProduct',
+	'as' => 'product'
+	]);
+

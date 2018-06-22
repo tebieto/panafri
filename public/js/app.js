@@ -1079,6 +1079,9 @@ module.exports = __webpack_require__(44);
 /* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
+var _watch;
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 /**
  * First we will load all of this project's JavaScript dependencies which
@@ -1101,7 +1104,98 @@ Vue.component('welcome', __webpack_require__(42));
 
 var app = new Vue({
 	el: '#app',
+
+	data: function data() {
+
+		return {
+
+			content: '',
+			not_working: true,
+			attachment: false,
+			form: new FormData(),
+			uploadedFile: [],
+			uploadDelay: [],
+			productImage: [],
+			sendingPost: false,
+			show_post_spinner: false,
+			productName: '',
+			ocategory: '1',
+			ncategory: '',
+			pdisabled: true,
+			categories: []
+
+		};
+	},
+	mounted: function mounted() {
+
+		this.allCategories();
+	},
+
+
 	methods: {
+		allCategories: function allCategories() {
+			var _this = this;
+
+			axios.get('/all/categories').then(function (response) {
+				console.log(response.data);
+				_this.categories = [];
+				response.data.forEach(function (category) {
+
+					_this.categories.push(category);
+				});
+			});
+		},
+		sendCategory: function sendCategory() {
+			var _this2 = this;
+
+			if (this.ncategory.length == 0) {
+				return;
+			}
+
+			axios.get('/save/category/' + this.ncategory).then(function (response) {
+
+				_this2.categories = [];
+				response.data.forEach(function (category) {
+
+					_this2.categories.push(category);
+				});
+
+				_this2.ncategory = ' ';
+			});
+		},
+		submitProduct: function submitProduct() {
+			var _this3 = this;
+
+			if (this.productImage.length > 0 && this.ocategory > 0 && this.ncategory.length == 0 && this.productName.length > 0) {
+
+				this.pdisabled = false;
+			} else {
+
+				this.pdisabled = true;
+				return;
+			}
+
+			var data = JSON.stringify({
+				name: this.productName,
+				image: this.productImage[0].URL,
+				category: this.ocategory
+			});
+
+			this.show_post_spinner = true;
+
+			axios.post('/submit/product', data, {
+				headers: {
+					'Content-Type': 'application/json'
+
+				}
+
+			}).then(function (response) {
+
+				_this3.productImage = [];
+				_this3.productName = '';
+				_this3.show_post_spinner = false;
+			});
+		},
 		showMenu: function showMenu() {
 
 			var hiddenDiv = document.getElementById('hide');
@@ -1176,8 +1270,118 @@ var app = new Vue({
 
 			var freeLance = document.getElementById('freelance-delivery');
 			freeLance.classList.add('hidden');
+		},
+		displayAdminCategory: function displayAdminCategory() {
+
+			var adminCategory = document.getElementById('admin-category');
+			adminCategory.classList.remove('hidden');
+		},
+		hideAdminCategory: function hideAdminCategory() {
+
+			var adminCategory = document.getElementById('admin-category');
+			adminCategory.classList.add('hidden');
+		},
+		showImagePicker: function showImagePicker() {
+
+			this.$refs.image.click();
+		},
+
+
+		// Handling Product Image Upload
+
+
+		removeUploaded: function removeUploaded() {
+			this.productImage = [];
+		},
+		imageChange: function imageChange(e) {
+			var _this4 = this;
+
+			var selected = e.target.files[0];
+
+			if (!selected) {
+				return 0;
+			}
+
+			this.uploadDelay.push('File');
+
+			var selectedFile = e.target.files[0];
+
+			this.attachment = selectedFile;
+			this.form.append('img', this.attachment);
+			var config = { headers: { 'Content-Type': 'multipart/form-data' } };
+
+			axios.post('/upload/image', this.form, config).then(function (response) {
+				//success
+
+
+				if (response.data.length == 0) {
+					_this4.uploadDelay = [];
+
+					return;
+				}
+
+				_this4.productImage = [];
+				_this4.uploadDelay = [];
+				_this4.productImage.push(response.data);
+			}).catch(function (response) {
+				//errors
+			});
 		}
-	}
+	},
+
+	watch: (_watch = {
+		productImage: function productImage() {
+
+			if (this.productImage.length > 0 && this.ocategory > 0 && this.ncategory.length == 0 && this.productName.length > 0) {
+
+				this.pdisabled = false;
+			} else {
+
+				this.pdisabled = true;
+				return this.pdisabled;
+			}
+		}
+	}, _defineProperty(_watch, 'productImage', function productImage() {
+
+		if (this.productImage.length > 0 && this.ocategory > 0 && this.ncategory.length == 0 && this.productName.length > 0) {
+
+			this.pdisabled = false;
+		} else {
+
+			this.pdisabled = true;
+			return this.pdisabled;
+		}
+	}), _defineProperty(_watch, 'ncategory', function ncategory() {
+
+		if (this.productImage.length > 0 && this.ocategory > 0 && this.ncategory.length == 0 && this.productName.length > 0) {
+
+			this.pdisabled = false;
+		} else {
+
+			this.pdisabled = true;
+			return this.pdisabled;
+		}
+	}), _defineProperty(_watch, 'ocategory', function ocategory() {
+
+		if (this.productImage.length > 0 && this.ocategory > 0 && this.ncategory.length == 0 && this.productName.length > 0) {
+
+			this.pdisabled = false;
+		} else {
+
+			this.pdisabled = true;
+			return this.pdisabled;
+		}
+	}), _defineProperty(_watch, 'productName', function productName() {
+
+		if (this.productImage.length > 0 && this.ocategory > 0 && this.ncategory.length == 0 && this.productName.length > 0) {
+
+			this.pdisabled = false;
+		} else {
+
+			this.pdisabled = true;
+			return this.pdisabled;
+		}
+	}), _watch)
 });
 
 /***/ }),
