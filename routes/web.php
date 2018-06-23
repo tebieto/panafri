@@ -29,6 +29,33 @@ Route::get('/all/categories', [
 	'as' => 'categories'
 	]);
 	
+Route::get('/all/products', [
+	'uses' => 'HomeController@products',
+	'as' => 'products'
+	]);
+	
+	
+Route::get('/sell/products/{cid}/{pid}', [
+	'uses' => 'HomeController@sellProduct',
+	'as' => 'sellproduct'
+	]);
+	
+Route::get('/auth/store', [
+	'uses' => 'HomeController@authStore',
+	'as' => 'authStore'
+	]);
+	
+Route::get('/check/store/{pid}', [
+	'uses' => 'HomeController@checkStore',
+	'as' => 'checkStore'
+	]);
+	
+Route::get('/remove/product/{pid}', [
+	'uses' => 'HomeController@removeProduct',
+	'as' => 'removeProduct'
+	]);
+	
+	
 Route::post('/upload/image', [
 	'uses' => 'HomeController@image',
 	'as' => 'image'
@@ -38,5 +65,10 @@ Route::post('/upload/image', [
 Route::post('/submit/product', [
 	'uses' => 'HomeController@submitProduct',
 	'as' => 'product'
+	]);
+	
+Route::post('/submit/seller', [
+	'uses' => 'HomeController@submitSeller',
+	'as' => 'submitseller'
 	]);
 

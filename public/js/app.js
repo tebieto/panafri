@@ -1079,9 +1079,6 @@ module.exports = __webpack_require__(44);
 /* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var _watch;
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 /**
  * First we will load all of this project's JavaScript dependencies which
@@ -1101,6 +1098,7 @@ window.Vue = __webpack_require__(36);
 
 Vue.component('example', __webpack_require__(39));
 Vue.component('welcome', __webpack_require__(42));
+Vue.component('sell-button', __webpack_require__(55));
 
 var app = new Vue({
 	el: '#app',
@@ -1122,31 +1120,59 @@ var app = new Vue({
 			ocategory: '1',
 			ncategory: '',
 			pdisabled: true,
-			categories: []
+			categories: [],
+			products: [],
+			sellerEmail: '',
+			sellerImage: [],
+			adminEmail: '',
+			sdisabled: true,
+			store: [],
+			similar: []
 
 		};
 	},
 	mounted: function mounted() {
-
+		this.authStore();
 		this.allCategories();
+		this.allProducts();
 	},
 
 
 	methods: {
-		allCategories: function allCategories() {
+		removeProduct: function removeProduct(pid) {
 			var _this = this;
+
+			axios.get('/remove/product/' + pid).then(function (response) {
+
+				_this.authStore();
+			});
+		},
+		allProducts: function allProducts() {
+			var _this2 = this;
+
+			axios.get('/all/products').then(function (response) {
+
+				_this2.products = [];
+				response.data.forEach(function (product) {
+
+					_this2.products.push(product);
+				});
+			});
+		},
+		allCategories: function allCategories() {
+			var _this3 = this;
 
 			axios.get('/all/categories').then(function (response) {
 				console.log(response.data);
-				_this.categories = [];
+				_this3.categories = [];
 				response.data.forEach(function (category) {
 
-					_this.categories.push(category);
+					_this3.categories.push(category);
 				});
 			});
 		},
 		sendCategory: function sendCategory() {
-			var _this2 = this;
+			var _this4 = this;
 
 			if (this.ncategory.length == 0) {
 				return;
@@ -1154,17 +1180,17 @@ var app = new Vue({
 
 			axios.get('/save/category/' + this.ncategory).then(function (response) {
 
-				_this2.categories = [];
+				_this4.categories = [];
 				response.data.forEach(function (category) {
 
-					_this2.categories.push(category);
+					_this4.categories.push(category);
 				});
 
-				_this2.ncategory = ' ';
+				_this4.ncategory = ' ';
 			});
 		},
 		submitProduct: function submitProduct() {
-			var _this3 = this;
+			var _this5 = this;
 
 			if (this.productImage.length > 0 && this.ocategory > 0 && this.ncategory.length == 0 && this.productName.length > 0) {
 
@@ -1191,11 +1217,52 @@ var app = new Vue({
 
 			}).then(function (response) {
 
-				_this3.productImage = [];
-				_this3.productName = '';
-				_this3.show_post_spinner = false;
+				_this5.productImage = [];
+				_this5.productName = '';
+				_this5.show_post_spinner = false;
+
+				_this5.allProducts();
 			});
 		},
+		submitSeller: function submitSeller() {
+			var _this6 = this;
+
+			if (this.sellerEmail.length > 0 && this.sellerImage.length > 0 && this.adminEmail.length > 0) {
+
+				this.sdisabled = false;
+			} else {
+
+				this.sdisabled = true;
+				return;
+			}
+
+			var data = JSON.stringify({
+				email: this.sellerEmail,
+				image: this.sellerImage[0].URL,
+				admin: this.adminEmail
+			});
+
+			this.show_post_spinner = true;
+
+			axios.post('/submit/seller', data, {
+				headers: {
+					'Content-Type': 'application/json'
+
+				}
+
+			}).then(function (response) {
+
+				console.log(response.data);
+				_this6.sellerImage = [];
+				_this6.sellerEmail = '';
+				_this6.adminEmail = '';
+				_this6.show_post_spinner = false;
+			});
+		},
+
+
+		//  Handling modal hiding and display methods			
+
 		showMenu: function showMenu() {
 
 			var hiddenDiv = document.getElementById('hide');
@@ -1281,20 +1348,51 @@ var app = new Vue({
 			var adminCategory = document.getElementById('admin-category');
 			adminCategory.classList.add('hidden');
 		},
-		showImagePicker: function showImagePicker() {
+		displayAdminSeller: function displayAdminSeller() {
 
-			this.$refs.image.click();
+			var adminSeller = document.getElementById('admin-seller');
+			adminSeller.classList.remove('hidden');
+		},
+		hideAdminSeller: function hideAdminSeller() {
+
+			var adminSeller = document.getElementById('admin-seller');
+			adminSeller.classList.add('hidden');
+		},
+
+
+		//Handle Product Sales
+		authStore: function authStore() {
+			var _this7 = this;
+
+			axios.get('/auth/store').then(function (response) {
+				_this7.store = [];
+
+				response.data.forEach(function (item) {
+
+					_this7.store.push(item);
+				});
+			});
 		},
 
 
 		// Handling Product Image Upload
 
 
+		showImagePicker: function showImagePicker() {
+
+			this.$refs.image.click();
+		},
+		showProductImagePicker: function showProductImagePicker() {
+
+			this.$refs.productimage.click();
+		},
 		removeUploaded: function removeUploaded() {
 			this.productImage = [];
 		},
 		imageChange: function imageChange(e) {
-			var _this4 = this;
+			var _this8 = this;
+
+			console.log('hi');
 
 			var selected = e.target.files[0];
 
@@ -1315,21 +1413,88 @@ var app = new Vue({
 
 
 				if (response.data.length == 0) {
-					_this4.uploadDelay = [];
+					_this8.uploadDelay = [];
 
 					return;
 				}
 
-				_this4.productImage = [];
-				_this4.uploadDelay = [];
-				_this4.productImage.push(response.data);
+				_this8.productImage = [];
+				_this8.uploadDelay = [];
+				_this8.productImage.push(response.data);
+			}).catch(function (response) {
+				//errors
+			});
+		},
+		sellerImageChange: function sellerImageChange(e) {
+			var _this9 = this;
+
+			var selected = e.target.files[0];
+
+			if (!selected) {
+				return 0;
+			}
+
+			this.uploadDelay.push('File');
+
+			var selectedFile = e.target.files[0];
+
+			this.attachment = selectedFile;
+			this.form.append('img', this.attachment);
+			var config = { headers: { 'Content-Type': 'multipart/form-data' } };
+
+			axios.post('/upload/image', this.form, config).then(function (response) {
+				//success
+
+
+				if (response.data.length == 0) {
+					_this9.uploadDelay = [];
+
+					return;
+				}
+
+				_this9.sellerImage = [];
+				_this9.uploadDelay = [];
+				_this9.sellerImage.push(response.data);
 			}).catch(function (response) {
 				//errors
 			});
 		}
 	},
 
-	watch: (_watch = {
+	watch: {
+		sellerImage: function sellerImage() {
+
+			if (this.sellerImage.length > 0 && this.sellerEmail.length > 0 && this.adminEmail.length > 0) {
+
+				this.sdisabled = false;
+			} else {
+
+				this.sdisabled = true;
+				return this.sdisabled;
+			}
+		},
+		sellerEmail: function sellerEmail() {
+
+			if (this.sellerImage.length > 0 && this.sellerEmail.length > 0 && this.adminEmail.length > 0) {
+
+				this.sdisabled = false;
+			} else {
+
+				this.sdisabled = true;
+				return this.sdisabled;
+			}
+		},
+		adminEmail: function adminEmail() {
+
+			if (this.sellerImage.length > 0 && this.sellerEmail.length > 0 && this.adminEmail.length > 0) {
+
+				this.sdisabled = false;
+			} else {
+
+				this.sdisabled = true;
+				return this.sdisabled;
+			}
+		},
 		productImage: function productImage() {
 
 			if (this.productImage.length > 0 && this.ocategory > 0 && this.ncategory.length == 0 && this.productName.length > 0) {
@@ -1340,48 +1505,41 @@ var app = new Vue({
 				this.pdisabled = true;
 				return this.pdisabled;
 			}
+		},
+		ncategory: function ncategory() {
+
+			if (this.productImage.length > 0 && this.ocategory > 0 && this.ncategory.length == 0 && this.productName.length > 0) {
+
+				this.pdisabled = false;
+			} else {
+
+				this.pdisabled = true;
+				return this.pdisabled;
+			}
+		},
+		ocategory: function ocategory() {
+
+			if (this.productImage.length > 0 && this.ocategory > 0 && this.ncategory.length == 0 && this.productName.length > 0) {
+
+				this.pdisabled = false;
+			} else {
+
+				this.pdisabled = true;
+				return this.pdisabled;
+			}
+		},
+		productName: function productName() {
+
+			if (this.productImage.length > 0 && this.ocategory > 0 && this.ncategory.length == 0 && this.productName.length > 0) {
+
+				this.pdisabled = false;
+			} else {
+
+				this.pdisabled = true;
+				return this.pdisabled;
+			}
 		}
-	}, _defineProperty(_watch, 'productImage', function productImage() {
-
-		if (this.productImage.length > 0 && this.ocategory > 0 && this.ncategory.length == 0 && this.productName.length > 0) {
-
-			this.pdisabled = false;
-		} else {
-
-			this.pdisabled = true;
-			return this.pdisabled;
-		}
-	}), _defineProperty(_watch, 'ncategory', function ncategory() {
-
-		if (this.productImage.length > 0 && this.ocategory > 0 && this.ncategory.length == 0 && this.productName.length > 0) {
-
-			this.pdisabled = false;
-		} else {
-
-			this.pdisabled = true;
-			return this.pdisabled;
-		}
-	}), _defineProperty(_watch, 'ocategory', function ocategory() {
-
-		if (this.productImage.length > 0 && this.ocategory > 0 && this.ncategory.length == 0 && this.productName.length > 0) {
-
-			this.pdisabled = false;
-		} else {
-
-			this.pdisabled = true;
-			return this.pdisabled;
-		}
-	}), _defineProperty(_watch, 'productName', function productName() {
-
-		if (this.productImage.length > 0 && this.ocategory > 0 && this.ncategory.length == 0 && this.productName.length > 0) {
-
-			this.pdisabled = false;
-		} else {
-
-			this.pdisabled = true;
-			return this.pdisabled;
-		}
-	}), _watch)
+	}
 });
 
 /***/ }),
@@ -43471,6 +43629,217 @@ if (false) {
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 45 */,
+/* 46 */,
+/* 47 */,
+/* 48 */,
+/* 49 */,
+/* 50 */,
+/* 51 */,
+/* 52 */,
+/* 53 */,
+/* 54 */,
+/* 55 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(9)
+/* script */
+var __vue_script__ = __webpack_require__(56)
+/* template */
+var __vue_template__ = __webpack_require__(57)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources\\assets\\js\\components\\SellButton.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-4fe7d44a", Component.options)
+  } else {
+    hotAPI.reload("data-v-4fe7d44a", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 56 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+
+	props: ['pid', 'pname', 'cid', 'type'],
+
+	mounted: function mounted() {
+
+		this.authStore();
+		this.checkStore();
+	},
+	data: function data() {
+
+		return {
+
+			hide: false,
+			similar: [],
+			store: []
+
+		};
+	},
+
+
+	methods: {
+		checkStore: function checkStore() {
+			var _this = this;
+
+			axios.get('/check/store/' + this.pid).then(function (response) {
+
+				if (response.data == 1) {
+
+					_this.hide = true;
+				} else {
+
+					_this.hide = false;
+				}
+			});
+		},
+		authStore: function authStore() {
+			var _this2 = this;
+
+			axios.get('/auth/store').then(function (response) {
+				_this2.store = [];
+
+				response.data.forEach(function (item) {
+
+					_this2.store.push(item);
+				});
+			});
+		},
+		iSellProduct: function iSellProduct() {
+			var _this3 = this;
+
+			this.hide = true;
+			axios.get('/sell/products/' + this.cid + '/' + this.pid).then(function (response) {
+
+				_this3.similar = [];
+
+				response.data.forEach(function (similar) {
+
+					_this3.similar.push(similar);
+				});
+
+				_this3.authStore();
+			});
+		}
+	}
+
+});
+
+/***/ }),
+/* 57 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("span", [
+    !_vm.hide && this.cid != 3 && this.type !== "remove"
+      ? _c(
+          "button",
+          {
+            on: {
+              click: function($event) {
+                _vm.iSellProduct()
+              }
+            }
+          },
+          [_vm._v("I Sell " + _vm._s(this.pname) + " Nearby")]
+        )
+      : _vm._e(),
+    _vm._v(" "),
+    !_vm.hide && this.cid == 3 && this.type !== "remove"
+      ? _c(
+          "button",
+          {
+            on: {
+              click: function($event) {
+                _vm.iSellProduct()
+              }
+            }
+          },
+          [_vm._v("I render this service")]
+        )
+      : _vm._e(),
+    _vm._v(" "),
+    _vm.hide && _vm.type != "remove"
+      ? _c("p", [_vm._v(" Already in your store")])
+      : _vm._e(),
+    _vm._v(" "),
+    this.type == "remove"
+      ? _c(
+          "button",
+          {
+            on: {
+              click: function($event) {
+                _vm.removeProduct()
+              }
+            }
+          },
+          [_vm._v("Remove " + _vm._s(this.pid))]
+        )
+      : _vm._e()
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-4fe7d44a", module.exports)
+  }
+}
 
 /***/ })
 /******/ ]);

@@ -143,11 +143,6 @@
 			</center>
 		</div>
 		
-		<div class="categories">
-			<center>
-				<h1>Freelance Delivery</h1>
-			</center>
-		</div>
 		
 		<div class="categories">
 			<center>

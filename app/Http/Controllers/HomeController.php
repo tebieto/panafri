@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\User;
 use App\Category;
 use App\Product;
+use App\Referral;
+use App\Store;
 use Auth;
 use DB;
 
@@ -48,6 +50,21 @@ class HomeController extends Controller
 	   return $all;
     }
 	
+	 public function Products()
+    {
+	  $all= array();
+      
+		
+	   $products = Product::get();
+	   
+	   foreach ($products as $product):
+	   array_push($all, $product);
+	   
+	   endforeach;
+	   
+	   return $all;
+    }
+	
 	 public function saveCategory($name)
     {
 	  $all= array();
@@ -68,6 +85,98 @@ class HomeController extends Controller
     }
 	
 	
+	 public function sellProduct($cid, $pid)
+    {
+	  
+	  $seller = User::where('id', auth::id())->where('status', 5)->first();
+	  
+	  if(!$seller) {
+		  
+		return 0;  
+		  
+	  }
+	  
+	   $more = array();
+		
+	  $others = Product::where('category_id', $cid)->get();
+	   
+	   foreach ($others as $other):
+	   array_push($more, $other);
+	   
+	   endforeach;
+	   
+	   
+	   
+	  
+	   $stored = Store::where('seller', auth::id())->where('product', $pid)->first();
+	  
+	  if(count($stored)) {
+		  
+		return $more;  
+		  
+	  }
+	  
+	  
+	  
+      $store = Store::create([
+			
+			'seller' => auth::id(),
+			'product' => $pid
+		]);
+		
+		return $more;
+		
+    }
+	
+	public function checkStore($pid)
+    {
+	  
+	  $check = Store::where('seller', auth::id())->where('product', $pid)->first();
+	  if($check) {
+		
+		return 1;
+		  
+	  }
+	  
+	  else {
+		return 0;  
+		  
+	  }
+	  
+	}
+	
+	public function removeProduct($pid)
+    {
+	$product = Store::where('seller', Auth::id())
+		->where('product', $pid)
+		->first();
+		
+		if(!empty($product)) {
+		
+		$product->delete();
+		
+		}
+		
+	}
+	
+	public function authStore()
+    {
+	  
+	  $stores = Store::where('seller', auth::id())->get();
+	  
+	  $all = array();
+	  
+	   foreach ($stores as $store):
+	   
+	   $product = Product::where('id', $store->product)->first();
+	   array_push($all, $product);
+	   
+	   endforeach;
+	   
+	   return $all;
+    }
+	
+	
 	public function submitProduct(Request $request)
     {
 
@@ -79,6 +188,26 @@ class HomeController extends Controller
 		]);
 		
 		return $request->image;
+		
+    }
+	
+	
+	public function submitSeller(Request $request)
+    {
+	  $user = User::where('email', $request->email)->first()
+	  ->update([
+			
+			'status' => 5,
+			'avatar' => $request->image,
+		]);
+		
+	 $referral= Referral::create([
+			
+			'email' => $request->admin,
+			
+		]);
+		
+		return $user;
 		
     }
 	
