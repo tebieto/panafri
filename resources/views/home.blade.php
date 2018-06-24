@@ -217,6 +217,7 @@
 		
 		<!-- End Category Class -->
 		
+		
 		<div class="categories">
 			<center>
 				<h1>Top Sellers</h1>
@@ -249,7 +250,7 @@
 		
 		<div class="search-box" @click.stop>
 		
-		<input type="text" name="search"  placeholder="Search anything... Request Everything" autofocus>
+		<input type="text" name="search"  placeholder="Search anything... Request Everything" autofocus v-model="query" @keyup="searchProducts">
 		
 		</div>
 		
@@ -257,6 +258,32 @@
 		
 		<img class="panafri-icon"  width="50px" height="auto" src="{{Storage::url('public/icons/panafri-icon.jpg')}}" alt="Panafri Icon" @click.stop />
 		
+		<!-- Begin Search Category Class -->
+		
+		<div class="categories">
+			
+			
+			<!-- Begin Products Class -->
+			
+			<div class="products">
+			 <div  v-for="product in results">
+			
+			 <img :src="product.image" height="200px" width="300px"  :alt="product.name" />
+			
+			 <div class="product-details" @click="authStore">
+			 <h2> <b> @{{product.name}} </b></h2>
+			 @if(auth::user()->status == 5)
+			<sell-button :pid="product.id" :pname="product.name" :cid="product.category_id"></sell-button>
+			 @else
+			 <button>Hire @{{product.name}} Nearby</button>
+			 @endif
+			</div>
+			
+		</div>
+		<!-- End Product Class -->
+		</div>
+		</div>
+		<!-- End Search Category Class -->
 		</div>
 		
 	<!--End of Search-page class div-->

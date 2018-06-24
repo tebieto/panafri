@@ -7,6 +7,7 @@
 
 require('./bootstrap');
 
+
 window.Vue = require('vue');
 
 /**
@@ -18,6 +19,10 @@ window.Vue = require('vue');
 Vue.component('example', require('./components/Example.vue'));
 Vue.component('welcome', require('./components/Welcome.vue'));
 Vue.component('sell-button', require('./components/SellButton.vue'));
+
+var algoliasearch = require('algoliasearch');
+var client = algoliasearch('VEOFPEJRLG', '6e163e296a3af0e603000750a01a4743');
+var index = client.initIndex('products');
 
 const app = new Vue({
     el: '#app',
@@ -48,7 +53,11 @@ const app = new Vue({
 				adminEmail: '',
 				sdisabled:true,
 				store: [],
-				similar: [], 
+				similar: [],
+				query:'',
+				results: [],
+				
+				
 			
 		}
 		
@@ -57,6 +66,10 @@ const app = new Vue({
 	},
 	
 mounted() {
+	
+	
+
+	
 this.authStore()	
 this.allCategories()
 this.allProducts()
@@ -64,6 +77,63 @@ this.allProducts()
 },
 	
 methods: {
+
+showError(error) {
+	
+	var x = document.getElementById("demo");
+
+    switch(error.code) {
+        case error.PERMISSION_DENIED:
+            x.innerHTML = "User denied the request for Geolocation."
+            break;
+        case error.POSITION_UNAVAILABLE:
+            x.innerHTML = "Location information is unavailable."
+            break;
+        case error.TIMEOUT:
+            x.innerHTML = "The request to get user location timed out."
+            break;
+        case error.UNKNOWN_ERROR:
+            x.innerHTML = "An unknown error occurred."
+            break;
+    }
+},
+	
+	
+showPosition(position) {
+	var lat = position.coords.latitude;
+	var lng = position.coords.longitude
+	var latlon = position.coords.latitude + "," + position.coords.longitude;
+    var img_url = "https://maps.googleapis.com/maps/api/staticmap?center="
+    +latlon+"&zoom=14&size=400x300&key=AIzaSyAh3prpUKLUAW3z5ylYBjUgORLidrBdRMU";
+    document.getElementById("map").innerHTML = "<img src='"+img_url+"'>";
+},
+	
+getLocation() {
+	var x = document.getElementById("demo");
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(this.showPosition, this.showError);
+    } else { 
+        x.innerHTML = "Geolocation is not supported by this browser.";
+    }
+	
+},
+
+
+
+	
+searchProducts() {
+	if (!this.query.length) {
+	return	
+		
+	}
+	index.search(this.query, (err, content) => {
+	
+	this.results =content.hits
+	
+});
+	
+	
+},
 
 
 removeProduct(pid) {
@@ -81,6 +151,23 @@ axios.get('/remove/product/' + pid ).then(response=>{
 allProducts() {
 
 axios.get('/all/products').then(response=>{
+		
+		this.products=[]
+		response.data.forEach((product)=> {
+			
+		this.products.push(product)
+			
+		})
+		
+		
+});
+
+},
+
+
+guestProducts() {
+
+axios.get('guest/all/products').then(response=>{
 		
 		this.products=[]
 		response.data.forEach((product)=> {

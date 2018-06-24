@@ -74,11 +74,11 @@
 				<li @click="startSellingModal()">
 				<a id="sell-link" >Start Selling</a>
 				</li>
-				
+				<!--
 				<li @click="freeLanceModal()">
 				<a id="delivery-link" >Start Freelance Delivery</a>
 				</li>
-				
+				-->
 				<li @click="welcomeLoginModal()">
 				<a id="login-link" >Login</a>
 				</li>
@@ -122,20 +122,62 @@
 		
 		<div class="content-body">
 		
+		
 		<!--Begin categories class div-->
 		
 		<div class="categories">
 			<center>
 				<h1>Top Products</h1>
 			</center>
+			
+			<!-- Begin Products Class -->
+			
+			<div class="products">
+			 <div  v-for="product in products" v-if="product.category_id != 3">
+			
+			 <img :src="product.image" height="200px" width="300px"  :alt="product.name" />
+			
+			 <div class="product-details" @click="authStore()">
+			 <h2> <b> @{{product.name}} </b></h2>
+			 
+			 <button>Buy @{{product.name}} Nearby</button>
+			
+			</div>
+			
 		</div>
+		<!-- End Product in products Class -->
+		</div>
+		<!-- End of product class-->
+		</div>
+		<!-- End of Categories class-->
 		
+		
+		<!-- Begin Category Class -->
 		
 		<div class="categories">
 			<center>
 				<h1>Top Services</h1>
 			</center>
+			
+			<!-- Begin Products Class -->
+			
+			<div class="products">
+			 <div  v-for="product in products" v-if="product.category_id == 3">
+			
+			 <img :src="product.image" height="200px" width="300px"  :alt="product.name" />
+			
+			 <div class="product-details" @click="authStore">
+			 <h2> <b> @{{product.name}} </b></h2>
+			 <button>Hire @{{product.name}} Nearby</button>
+			 
+			</div>
+			
 		</div>
+		<!-- End Product Class -->
+		</div>
+		
+		<!-- End Category Class -->
+		
 		
 		<div class="categories">
 			<center>
@@ -148,6 +190,14 @@
 			<center>
 				<h1>How it Works</h1>
 			</center>
+			
+			<p>Click the button to get your coordinates.</p>
+
+<button @click="getLocation()">Try It</button>
+
+ <p id="demo"></p>
+ 
+ <div id="map"></div>
 		</div>
 			
 		<!--End of categories class div-->
@@ -169,7 +219,7 @@
 		
 		<div class="search-box" @click.stop>
 		
-		<input type="text" name="search"  placeholder="Search anything... Request Everything" autofocus>
+		<input type="text" name="search"  placeholder="Search anything... Request Everything" autofocus v-model="query" @keyup="searchProducts">
 		
 		</div>
 		
@@ -177,16 +227,40 @@
 		
 		<img class="panafri-icon"  width="50px" height="auto" src="{{Storage::url('public/icons/panafri-icon.jpg')}}" alt="Panafri Icon" @click.stop />
 		
+		<!-- Begin Search Category Class -->
+		
+		<div class="categories">
+			
+			
+			<!-- Begin Products Class -->
+			
+			<div class="products">
+			 <div  v-for="product in results">
+			
+			 <img :src="product.image" height="200px" width="300px"  :alt="product.name" />
+			
+			 <div class="product-details" @click="authStore">
+			 <h2> <b> @{{product.name}} </b></h2>
+			 
+			 <button>Hire @{{product.name}} Nearby</button>
+			
+			</div>
+			
+		</div>
+		<!-- End Product Class -->
+		</div>
+		</div>
+		<!-- End Search Category Class -->
 		</div>
 		
 	<!--End of Search-page class div-->
 	 
 	 
-	 <!--Begin start-selling class div-->
+	 <!--Begin admin-category class div-->
 
 	
-	 <div id="start-selling" 
-	 class="start-selling {{old('register') ? ' ' : 'hidden' }}" @click="hideStartSellingModal()">
+	 <div id="admin-category" 
+	 class="start-selling {{old('admin') ? ' ' : 'hidden' }}" @click="hideAdminCategory()">
 	
 	 
 	 <!--Begin form-container class div-->	
@@ -201,119 +275,104 @@
 		<a href="http://panafri.com">  <img class="panafri-logo"  width="150px" height="auto" src="{{Storage::url('public/icons/panafri-logo.png')}}" alt="Panafri logo"></a>
 	 </div>
 	 <div class="form-message">
-	 Sell to people nearby in realtime, we have freelance delivery personnel around to help you deliver to your customers.
+	 Hello Admin, Add Products and Categories
 	 </div>
-	  <form class="start-selling-form" method="POST" action="{{ route('register') }}">
-                        {{ csrf_field() }}
 	 
+	 <div class="form">
 	 <table>
-	 <tr><td></td><th><h3>Personal Information (<a class="learn-more">Read Data Policy</a>)</h3></th></tr>
+	 
+	 <tr><td></td><th><h3>Enter New Products And Categories</h3></th></tr>
+	 
+	 
+	 
 	 <tr>
-	 <td>First Name</td>
-	 <td><input type="text" name="fname"  value="{{ old('fname') }}" required autofocus /></td>
+	 <td>Product Name</td>
+	 <td><input type="text" name="product" placeholder="Enter product name" v-model="productName" >
+	 </td>
 	 </tr>
-	 @if ($errors->has('fname'))
-     <tr>
-       <td><strong>{{ $errors->first('fname') }}</strong></td>
-     </tr>
-     @endif
-	 
-	 <tr>
-	 <td>Middle Name</td>
-	 <td><input type="text" name="mname"  value="{{ old('mname') }}"  /></td>
-	 </tr>
-	 @if ($errors->has('mname'))
-     <tr>
-      <td></td> <td><strong>{{ $errors->first('mname') }}</strong></td>
-     </tr>
-     @endif
-	 
-	 <tr>
-	 <td>Last Name</td>
-	 <td><input type="text" name="lname"  value="{{ old('lname') }}" required /></td>
-	 </tr>
-	 @if ($errors->has('lname'))
-     <tr>
-       <td></td> <td><strong>{{ $errors->first('lname') }}</strong></td>
-     </tr>
-     @endif
-	 
-	 <tr><td></td><th><h3>Private Information (<a class="learn-more">Read Data Policy</a>)</h3></th></tr>
-	 <tr>
-	 
-	 <tr>
-	 <td>Email</td>
-	 <td><input type="email" name="email"  value="{{ old('email') }}" required /></td>
-	 </tr>
-	 @if ($errors->has('email'))
-     <tr>
-        <td></td><td><strong>{{ $errors->first('email') }}</strong></td>
-     </tr>
-     @endif
-	 
-	 <tr>
-	 <td>Phone Number</td>
-	 <td><input type="number" max="9999999999" name="phone"  value="{{ old('phone') }}" required /></td>
-	 </tr>
-	 @if ($errors->has('phone'))
-     <tr>
-       <td></td> <td><strong>{{ $errors->first('phone') }}</strong></td>
-     </tr>
-     @endif
-	 
-	 <tr><td></td><th><h3>Sensitive Information (<a class="learn-more">Read Data Policy</a>)</h3></th></tr>
-	 <tr>
 	 
 	
+	 
 	 <tr>
-	 <td>Password</td>
-	 <td><input  type="password"  name="password"  value="{{ old('password') }}" required /></td>
+	 <td>Choose Category</td>
+	 <td><select name="ocategory" v-model="ocategory" >
+	 <option value=''>Choose</option>
+	 <option v-for="category in categories" :value="category.id">@{{category.name}}</option>
+	 </select>
+	 </td>
 	 </tr>
-	 @if ($errors->has('password'))
-     <tr>
-        <td></td><td><strong>{{ $errors->first('password') }}</strong></td>
-     </tr>
-     @endif
 	 
 	  <tr>
-	 <td>Confrirm Password </td>
-	 <td><input type="password"  name=" password_confirmation"  value="{{ old('password_confirmation') }}" required /></td>
+	 <td>Create New Category</td>
+	 <td><input type="text" name="ncategory" placeholder="Enter new category" v-model="ncategory" @keyup.enter="sendCategory">
+	 </td>
 	 </tr>
-	 @if ($errors->has('password_confirmation'))
-     <tr>
-        <td></td><td><strong>{{ $errors->first('password_confirmation') }}</strong></td>
-     </tr>
-     @endif
 	 
+	 <!-- Begin Adding image upload -->
+	 
+	 <div  id="uploadedContainer" v-if="productImage.length>0 || uploadDelay.length>0">
+				 
+				 <div class="showUploaded" v-for="file in productImage">
+				 <div class="uploaded_file_container">
+				 <img  v-if="file.type=='image'" class="uploadedFile" :src="file.URL" width="100" height="100"  alt="" />
+				
+				 <video v-if="file.type=='video'" class="uploadedFile" width="100" height="100" controls >
+				 <source :src="file.URL" :type="file.mime">
+				</video>
+				 <div id="uploadInfo" ><span class="uploadDelete" @click="removeUploaded"><b>x</b></span></div>
+			     </div>
+				 <!-- Add Image Spinner -->
+				 
+				 <div class="spinner_wrapper" v-for=" file in uploadDelay">
+				 <div class="spinner"></div>
+				 </div>
+	  </div>
+				 
+	 
+	
+	
 	 <tr>
-        <td></td><td><strong>By clicking "Register and Sell" you agree that you are over 13 years of age and you accept our <a class="learn-more">Terms of Service</a> </strong></td>
-     </tr>
-	 
+	 <td>Product Image</td>
+	 <td>
+	 <input type="file" ref="productimage"  style="display:none;" accept="image/*" v-on:change="imageChange">
+				<span @click="showProductImagePicker" class="image-picker" title="Choose file"  ><img  id="" src="/storage/icons/photo_icon.png" width="15px" height="15px"  alt="" /><span class="photo_icon_text"><b> Select</b></span></span>
+	 </td>
+	 </tr>
+	  <!-- End Adding image upload -->
 	 <tr>
 	 <td></td>
-	 <td><button type="submit">Register and Sell</button></td>
+	 <td><button v-if="!show_post_spinner" class="addProductButton post_button" type="submit" @click="submitProduct()" :disabled="pdisabled">Add Product</button>
+	<div class="post_spinner_wrapper" v-if="show_post_spinner">
+	 <div class="post_spinner"></div>
+	</div>
+	 
+	 
+	 
+	 </td>
 	 </tr>
-	 
-	 
 	 </table>
+	
+	  <input type="hidden" name="product" value="product">
 	 
-	  <input type="hidden" name="register" value="register">
-	 </form>
-	 
+	  </div>
+	  
+	  <!--End of form class-->
+	  
 	 </div>
 	 
 	 <!--End of form-container class div-->
 	 
 	 </div>
 	 
-	  <!--End of start-selling class div-->
+	 <!--End of admin-category class div-->
 	  
-	  
-	  <!--Begin register class div-->
+	 
+	 
+	  <!--Begin admin-Seller class div-->
 
 	
-	 <div id="welcome-register" 
-	 class="start-selling {{old('reg') ? ' ' : 'hidden' }}" @click="hideWelcomeRegisterModal()">
+	 <div id="admin-seller" 
+	 class="start-selling {{old('adminseller') ? ' ' : 'hidden' }}" @click="hideAdminSeller()">
 	
 	 
 	 <!--Begin form-container class div-->	
@@ -328,112 +387,89 @@
 		<a href="http://panafri.com">  <img class="panafri-logo"  width="150px" height="auto" src="{{Storage::url('public/icons/panafri-logo.png')}}" alt="Panafri logo"></a>
 	 </div>
 	 <div class="form-message">
-	When you register, we give you a dashboard to manage your transactions in realtime. You can also earn money by working as a freelance distributor. 
+	 Hello Admin, Add a new seller
 	 </div>
-	  <form class="start-selling-form" method="POST" action="{{ route('register') }}">
-                        {{ csrf_field() }}
 	 
+	 <div class="form">
 	 <table>
-	 <tr><td></td><th><h3>Personal Information (<a class="learn-more">Read Data Policy</a>)</h3></th></tr>
+	 
+	 <tr><td></td><th><h3>Enter email of sellers to add them</h3></th></tr>
+	 
+	 
+	 
 	 <tr>
-	 <td>First Name</td>
-	 <td><input type="text" name="fname"  value="{{ old('fname') }}" required autofocus /></td>
+	 <td>Seller Email</td>
+	 <td><input type="email" name="product" placeholder="Enter seller Email" v-model="sellerEmail" >
+	 </td>
 	 </tr>
-	 @if ($errors->has('fname'))
-     <tr>
-       <td><strong>{{ $errors->first('fname') }}</strong></td>
-     </tr>
-     @endif
 	 
 	 <tr>
-	 <td>Middle Name</td>
-	 <td><input type="text" name="mname"  value="{{ old('mname') }}"  /></td>
+	 <td>Admin Email</td>
+	 <td><input type="email" name="adminemail" placeholder="Enter your email" v-model="adminEmail" >
+	 </td>
 	 </tr>
-	 @if ($errors->has('mname'))
-     <tr>
-      <td></td> <td><strong>{{ $errors->first('mname') }}</strong></td>
-     </tr>
-     @endif
 	 
-	 <tr>
-	 <td>Last Name</td>
-	 <td><input type="text" name="lname"  value="{{ old('lname') }}" required /></td>
-	 </tr>
-	 @if ($errors->has('lname'))
-     <tr>
-       <td></td> <td><strong>{{ $errors->first('lname') }}</strong></td>
-     </tr>
-     @endif
 	 
-	 <tr><td></td><th><h3>Private Information (<a class="learn-more">Read Data Policy</a>)</h3></th></tr>
-	 <tr>
-	 
-	 <tr>
-	 <td>Email</td>
-	 <td><input type="email" name="email"  value="{{ old('email') }}" required /></td>
-	 </tr>
-	 @if ($errors->has('email'))
-     <tr>
-        <td></td><td><strong>{{ $errors->first('email') }}</strong></td>
-     </tr>
-     @endif
-	 
-	 <tr>
-	 <td>Phone Number</td>
-	 <td><input type="number" max="9999999999" name="phone"  value="{{ old('phone') }}" required /></td>
-	 </tr>
-	 @if ($errors->has('phone'))
-     <tr>
-       <td></td> <td><strong>{{ $errors->first('phone') }}</strong></td>
-     </tr>
-     @endif
-	 
-	 <tr><td></td><th><h3>Sensitive Information (<a class="learn-more">Read Data Policy</a>)</h3></th></tr>
-	 <tr>
 	 
 	
+	 
+	 <!-- Begin Adding image upload -->
+	 
+	 <div  id="uploadedContainer" v-if="sellerImage.length>0 || uploadDelay.length>0">
+				 
+				 <div class="showUploaded" v-for="file in sellerImage">
+				 <div class="uploaded_file_container">
+				 <img  v-if="file.type=='image'" class="uploadedFile" :src="file.URL" width="100" height="100"  alt="" />
+				
+				 <video v-if="file.type=='video'" class="uploadedFile" width="100" height="100" controls >
+				 <source :src="file.URL" :type="file.mime">
+				</video>
+				 <div id="uploadInfo" ><span class="uploadDelete" @click="removeUploaded"><b>x</b></span></div>
+			     </div>
+				 <!-- Add Image Spinner -->
+				 
+				 <div class="spinner_wrapper" v-for=" file in uploadDelay">
+				 <div class="spinner"></div>
+				 </div>
+	  </div>
+				 
+	 
+	
+	
 	 <tr>
-	 <td>Password</td>
-	 <td><input  type="password"  name="password"  value="{{ old('password') }}" required /></td>
+	 <td>Seller Photo</td>
+	 <td>
+	 <input type="file" ref="image"  style="display:none;" accept="image/*" v-on:change="sellerImageChange">
+				<span @click="showImagePicker" class="image-picker" title="Choose file"  ><img  id="" src="/storage/icons/photo_icon.png" width="15px" height="15px"  alt="" /><span class="photo_icon_text"><b> Select</b></span></span>
+	 </td>
 	 </tr>
-	 @if ($errors->has('password'))
-     <tr>
-        <td></td><td><strong>{{ $errors->first('password') }}</strong></td>
-     </tr>
-     @endif
-	 
-	  <tr>
-	 <td>Confrirm Password </td>
-	 <td><input type="password"  name=" password_confirmation"  value="{{ old('password_confirmation') }}" required /></td>
-	 </tr>
-	 @if ($errors->has('password_confirmation'))
-     <tr>
-        <td></td><td><strong>{{ $errors->first('password_confirmation') }}</strong></td>
-     </tr>
-     @endif
-	 
-	 <tr>
-        <td></td><td><strong>By clicking "Register" you agree that you are over 13 years of age and you accept our <a class="learn-more">Terms of Service</a> </strong></td>
-     </tr>
-	 
+	  <!-- End Adding image upload -->
 	 <tr>
 	 <td></td>
-	 <td><button type="submit">Register</button></td>
+	 <td><button v-if="!show_post_spinner" class="addProductButton post_button" type="submit" @click="submitSeller()" :disabled="sdisabled">Add Seller</button>
+	<div class="post_spinner_wrapper" v-if="show_post_spinner">
+	 <div class="post_spinner"></div>
+	</div>
+	 
+	 
+	 
+	 </td>
 	 </tr>
-	 
-	 
 	 </table>
+	
+	  <input type="hidden" name="adminseller" value="admin seller">
 	 
-	  <input type="hidden" name="reg" value="register">
-	 </form>
-	 
+	  </div>
+	  
+	  <!--End of form class-->
+	  
 	 </div>
 	 
 	 <!--End of form-container class div-->
 	 
 	 </div>
 	 
-	  <!--End of register class div-->
+	 <!--End of admin-sellers class div-->
 	  
 	  
 	   <!--Begin freelance class div-->
@@ -641,9 +677,8 @@
 	 
 	  <!--End of welcome-login class div-->
 	  
-	  
-	  
-	  </div>
+</div>
+</div>
 	  
 	 
 	 <!--End of container class div-->
@@ -653,6 +688,7 @@
    
 		
 	<!-- Scripts -->
+	<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAh3prpUKLUAW3z5ylYBjUgORLidrBdRMU"></script>
 	 <script src="{{ asset('js/app.js') }}"></script>
     <script src="{{ asset('js/welcome.js') }}"></script>
 	

@@ -17,7 +17,8 @@ margin:auto;
 /* for products and categories */
 
 .products div {
-	
+background:#fff;
+color:#000;	
 display: inline-block; 
 vertical-align: top;
 width:300px;

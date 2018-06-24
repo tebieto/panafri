@@ -11,11 +11,14 @@
 |
 */
 
+
+Auth::routes();
+
 Route::get('/', function () {
     return view('welcome');
 });
 
-Auth::routes();
+
 
 Route::get('/home', 'HomeController@index')->name('home');
 
@@ -55,6 +58,7 @@ Route::get('/remove/product/{pid}', [
 	'as' => 'removeProduct'
 	]);
 	
+
 	
 Route::post('/upload/image', [
 	'uses' => 'HomeController@image',
@@ -71,4 +75,25 @@ Route::post('/submit/seller', [
 	'uses' => 'HomeController@submitSeller',
 	'as' => 'submitseller'
 	]);
+	
+Route::post('/map', function (Request $request) {
+    $lat = $request->input('lat');
+    $long = $request->input('long');
+    $location = ["lat"=>$lat, "long"=>$long];
+    event(new SendLocation($location));
+    return response()->json(['status'=>'success', 'data'=>$location]);
+});
 
+	
+Route::group(['middleware' => ['auth']], function () {
+    //only authorized users can access these routes
+});
+
+Route::group(['middleware' => ['guest']], function () {
+    //only guests can access these routes
+	
+	Route::get('guest/all/products', [
+	'uses' => 'Controller@guestproducts',
+	'as' => 'guestproducts'
+	]);
+});

@@ -12,6 +12,8 @@
 
 <script>
 
+
+
 export default {
 
 props: ['pid', 'pname', 'cid', 'type'],

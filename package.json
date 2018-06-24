@@ -17,5 +17,11 @@
     "laravel-mix": "^1.0",
     "lodash": "^4.17.4",
     "vue": "^2.1.10"
+  },
+  "dependencies": {
+    "algoliasearch": "^3.29.0",
+    "laravel-echo": "^1.4.0",
+    "pusher-js": "^4.2.2",
+    "vue2-google-maps": "^0.9.7"
   }
 }
