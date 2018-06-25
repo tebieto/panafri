@@ -219,7 +219,7 @@
 		
 		<div class="categories">
 			<center>
-				<h1>The Bigger Picture</h1>
+				<h1>The Big Picture</h1>
 			</center>
 		</div>
 		<!--End of categories class div-->	
