@@ -6,6 +6,31 @@ background:rgb(255,00,0);
 font-family: candara;
 }
 
+#search-page .search-message {
+top:20px;	
+}
+
+#search-page .main-search-icon {
+	
+top:120px;	
+}
+
+#search-page .panafri-icon {
+	
+top:120px;	
+}
+
+#search-page .categories {
+position: relative;	
+top:200px;
+height: 800px;
+overflow-y: auto;	
+}
+
+#search-page .search-box {
+top: 100px;		
+}
+
 .products {
 	
 width: 85%;

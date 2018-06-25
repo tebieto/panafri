@@ -304,7 +304,7 @@
 			
 			<!-- Begin Products Class -->
 			
-			<div class="products">
+			<div class="products" @click.stop>
 			 <div  v-for="product in results">
 			
 			 <img :src="product.image" height="200px" width="300px"  :alt="product.name" />
