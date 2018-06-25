@@ -85,6 +85,36 @@ class HomeController extends Controller
     }
 	
 	
+	public function findSellers($pid, $cid)
+    {
+		 $stored = Store::where('product', $pid)->get();
+		if (!$stored) {
+			
+		return 0;	
+			
+		}
+		 $sellers = array();
+		 
+		 foreach ($stored as $store):
+		 
+		 $seller = User::where('id', $store->seller)->first();
+		 
+		 array_push($sellers, $seller);
+		
+		 endforeach;
+		 
+		 return $sellers;
+	}
+	
+	public function activeProduct($pid)
+    {
+		
+		$product = Product::where('id', $pid)->first();
+		return $product;
+		
+	}
+	
+	
 	 public function sellProduct($cid, $pid)
     {
 	  

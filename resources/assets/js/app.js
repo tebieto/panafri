@@ -56,6 +56,12 @@ const app = new Vue({
 				similar: [],
 				query:'',
 				results: [],
+				activeSellers: [],
+				activeProduct: [],
+				activeProductId: '',
+				activeSellerId: '',
+				activeCategoryId: '',
+		
 				
 				
 			
@@ -214,7 +220,7 @@ axios.get('/save/category/' + this.ncategory).then(response=>{
 			
 		})
 		
-		this.ncategory= ' '
+		this.ncategory= ''
 		
 		
 });
@@ -266,7 +272,49 @@ let data = JSON.stringify({
 				 
 				})
 			},
+
+findSeller(pid, cid){
+		
+		this.getActiveProduct(pid)
+		this.activeProductId = pid
+		this.activeCategoryId = cid
+
+		axios.get('/find/sellers/' + pid + '/' +cid).then(response=>{
+			this.activeSellers = []
+			response.data.forEach((seller)=> {
 			
+		this.activeSellers.push(seller)
+			
+		})	
+			
+		})
+
+		this.showActivePage()
+
+},	
+
+
+hireSeller(sid) {
+	
+	this.hideActivePage()
+	this.activeSellerId = sid
+	
+	
+},
+getActiveProduct(pid) {
+	
+	axios.get('/active/product/' + pid).then(response=>{
+			
+		
+		this.activeProduct = []
+		this.activeProduct.push(response.data)
+			
+		
+			
+		})
+	
+	
+},
 			
 submitSeller() {
 	
@@ -338,12 +386,7 @@ hidemenu.classList.add('hidden')
 
 },
 
-showSearchModal() {
-	
-var searchModal = document.getElementById('search-page')	
-searchModal.classList.remove('hidden')	
-	
-},
+
 
 
 verifyPassword() {
@@ -353,12 +396,48 @@ searchModal.classList.remove('hidden')
 	
 },
 
+showSearchModal() {
+	
+var searchModal = document.getElementById('search-page')	
+searchModal.classList.remove('hidden')	
+	
+},
 
 hideSearchModal() {
 	
 var searchModal = document.getElementById('search-page')	
 searchModal.classList.add('hidden')	
 	
+},
+
+showActivePage() {
+	
+var activeModal = document.getElementById('active-page')	
+activeModal.classList.remove('hidden')	
+	
+},
+
+hideActivePage() {
+this.activeSellers= []
+this.activeProduct= []	
+var activeModal = document.getElementById('active-page')	
+activeModal.classList.add('hidden')	
+	
+},
+
+
+loginFirst() {
+	
+var loginFirst = document.getElementById('login-first')	
+loginFirst.classList.remove('hidden')
+
+},
+
+hideLoginFirst() {
+	
+var loginFirst = document.getElementById('login-first')	
+loginFirst.classList.add('hidden')
+
 },
 
 startSellingModal() {

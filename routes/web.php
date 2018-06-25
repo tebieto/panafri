@@ -53,6 +53,17 @@ Route::get('/check/store/{pid}', [
 	'as' => 'checkStore'
 	]);
 	
+	
+Route::get('/find/sellers/{pid}/{cid}', [
+	'uses' => 'HomeController@findSellers',
+	'as' => 'findSellers'
+	]);
+	
+Route::get('/active/product/{pid}', [
+	'uses' => 'HomeController@activeProduct',
+	'as' => 'activeProduct'
+	]);
+	
 Route::get('/remove/product/{pid}', [
 	'uses' => 'HomeController@removeProduct',
 	'as' => 'removeProduct'

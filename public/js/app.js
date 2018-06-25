@@ -1133,7 +1133,12 @@ var app = new Vue({
 			store: [],
 			similar: [],
 			query: '',
-			results: []
+			results: [],
+			activeSellers: [],
+			activeProduct: [],
+			activeProductId: '',
+			activeSellerId: '',
+			activeCategoryId: ''
 
 		};
 	},
@@ -1250,7 +1255,7 @@ var app = new Vue({
 					_this6.categories.push(category);
 				});
 
-				_this6.ncategory = ' ';
+				_this6.ncategory = '';
 			});
 		},
 		submitProduct: function submitProduct() {
@@ -1288,8 +1293,39 @@ var app = new Vue({
 				_this7.allProducts();
 			});
 		},
-		submitSeller: function submitSeller() {
+		findSeller: function findSeller(pid, cid) {
 			var _this8 = this;
+
+			this.getActiveProduct(pid);
+			this.activeProductId = pid;
+			this.activeCategoryId = cid;
+
+			axios.get('/find/sellers/' + pid + '/' + cid).then(function (response) {
+				_this8.activeSellers = [];
+				response.data.forEach(function (seller) {
+
+					_this8.activeSellers.push(seller);
+				});
+			});
+
+			this.showActivePage();
+		},
+		hireSeller: function hireSeller(sid) {
+
+			this.hideActivePage();
+			this.activeSellerId = sid;
+		},
+		getActiveProduct: function getActiveProduct(pid) {
+			var _this9 = this;
+
+			axios.get('/active/product/' + pid).then(function (response) {
+
+				_this9.activeProduct = [];
+				_this9.activeProduct.push(response.data);
+			});
+		},
+		submitSeller: function submitSeller() {
+			var _this10 = this;
 
 			if (this.sellerEmail.length > 0 && this.sellerImage.length > 0 && this.adminEmail.length > 0) {
 
@@ -1317,10 +1353,10 @@ var app = new Vue({
 			}).then(function (response) {
 
 				console.log(response.data);
-				_this8.sellerImage = [];
-				_this8.sellerEmail = '';
-				_this8.adminEmail = '';
-				_this8.show_post_spinner = false;
+				_this10.sellerImage = [];
+				_this10.sellerEmail = '';
+				_this10.adminEmail = '';
+				_this10.show_post_spinner = false;
 			});
 		},
 
@@ -1347,12 +1383,12 @@ var app = new Vue({
 			showmenu.classList.remove('hidden');
 			hidemenu.classList.add('hidden');
 		},
-		showSearchModal: function showSearchModal() {
+		verifyPassword: function verifyPassword() {
 
 			var searchModal = document.getElementById('search-page');
 			searchModal.classList.remove('hidden');
 		},
-		verifyPassword: function verifyPassword() {
+		showSearchModal: function showSearchModal() {
 
 			var searchModal = document.getElementById('search-page');
 			searchModal.classList.remove('hidden');
@@ -1361,6 +1397,27 @@ var app = new Vue({
 
 			var searchModal = document.getElementById('search-page');
 			searchModal.classList.add('hidden');
+		},
+		showActivePage: function showActivePage() {
+
+			var activeModal = document.getElementById('active-page');
+			activeModal.classList.remove('hidden');
+		},
+		hideActivePage: function hideActivePage() {
+			this.activeSellers = [];
+			this.activeProduct = [];
+			var activeModal = document.getElementById('active-page');
+			activeModal.classList.add('hidden');
+		},
+		loginFirst: function loginFirst() {
+
+			var loginFirst = document.getElementById('login-first');
+			loginFirst.classList.remove('hidden');
+		},
+		hideLoginFirst: function hideLoginFirst() {
+
+			var loginFirst = document.getElementById('login-first');
+			loginFirst.classList.add('hidden');
 		},
 		startSellingModal: function startSellingModal() {
 
@@ -1426,14 +1483,14 @@ var app = new Vue({
 
 		//Handle Product Sales
 		authStore: function authStore() {
-			var _this9 = this;
+			var _this11 = this;
 
 			axios.get('/auth/store').then(function (response) {
-				_this9.store = [];
+				_this11.store = [];
 
 				response.data.forEach(function (item) {
 
-					_this9.store.push(item);
+					_this11.store.push(item);
 				});
 			});
 		},
@@ -1454,7 +1511,7 @@ var app = new Vue({
 			this.productImage = [];
 		},
 		imageChange: function imageChange(e) {
-			var _this10 = this;
+			var _this12 = this;
 
 			console.log('hi');
 
@@ -1477,20 +1534,20 @@ var app = new Vue({
 
 
 				if (response.data.length == 0) {
-					_this10.uploadDelay = [];
+					_this12.uploadDelay = [];
 
 					return;
 				}
 
-				_this10.productImage = [];
-				_this10.uploadDelay = [];
-				_this10.productImage.push(response.data);
+				_this12.productImage = [];
+				_this12.uploadDelay = [];
+				_this12.productImage.push(response.data);
 			}).catch(function (response) {
 				//errors
 			});
 		},
 		sellerImageChange: function sellerImageChange(e) {
-			var _this11 = this;
+			var _this13 = this;
 
 			var selected = e.target.files[0];
 
@@ -1511,14 +1568,14 @@ var app = new Vue({
 
 
 				if (response.data.length == 0) {
-					_this11.uploadDelay = [];
+					_this13.uploadDelay = [];
 
 					return;
 				}
 
-				_this11.sellerImage = [];
-				_this11.uploadDelay = [];
-				_this11.sellerImage.push(response.data);
+				_this13.sellerImage = [];
+				_this13.uploadDelay = [];
+				_this13.sellerImage.push(response.data);
 			}).catch(function (response) {
 				//errors
 			});

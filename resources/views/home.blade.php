@@ -32,7 +32,7 @@
 			
 			<div class="logo">
 			
-				<a href="http://panafri.com">  <img class="panafri-logo"  width="150px" height="auto" src="{{Storage::url('public/icons/panafri-logo.png')}}" alt="Panafri logo"></a>
+				<img class="panafri-logo"  width="150px" height="auto" src="{{Storage::url('public/icons/panafri-logo.png')}}" alt="Panafri logo">
 			</div>
 			
 		 <!--End logo class DIV-->	
@@ -76,14 +76,16 @@
 				<a id="admin-link" >Admin Sellers</a>
 				</li>
 				@endif
-				
+				<!--
 				<li @click="freeLanceModal()">
 				<a id="delivery-link" >Start Freelance Delivery</a>
 				</li>
 				
+				
 				<li @click="welcomeLoginModal()">
 				<a id="login-link" >Login</a>
 				</li>
+				-->
 				<li >
 				<form method="post" action="/logout">
 				{{ csrf_field() }}
@@ -176,7 +178,7 @@
 			 @if(auth::user()->status == 5)
 			 <sell-button :pid="product.id" :pname="product.name" :cid="product.category_id"></sell-button>
 			 @else
-			 <button>Buy @{{product.name}} Nearby</button>
+			 <button @click="findSeller(product.id, product.category_id)">Buy @{{product.name}} Nearby</button>
 			 @endif
 			</div>
 			
@@ -207,7 +209,8 @@
 			 @if(auth::user()->status == 5)
 			<sell-button :pid="product.id" :pname="product.name" :cid="product.category_id"></sell-button>
 			 @else
-			 <button>Hire @{{product.name}} Nearby</button>
+			 <button v-if="product.category_id==3" @click="findSeller(product.id, product.category_id)">Hire @{{product.name}}s Nearby</button>
+			 <button v-else @click="findSeller(product.id, product.category_id)">Buy @{{product.name}} Nearby</button>
 			 @endif
 			</div>
 			
@@ -217,17 +220,53 @@
 		
 		<!-- End Category Class -->
 		
-		
+		<!--Future Feature
 		<div class="categories">
 			<center>
 				<h1>Top Sellers</h1>
 			</center>
 		</div>
-		
+		-->
 		
 		<div class="categories">
 			<center>
-				<h1>How it Works</h1>
+				<h1>How Panafri Works</h1>
+			</center>
+		</div>
+		
+		<div class="categories">
+			<center>
+				<h1>About Panafri</h1>
+			</center>
+		</div>
+		
+		<div class="categories">
+			<center>
+				<h1>The Panafri Way</h1>
+			</center>
+		</div>
+		
+		<div class="categories">
+			<center>
+				<h1>Panafri Philosophy</h1>
+			</center>
+		</div>
+		
+		<div class="categories">
+			<center>
+				<h1>Panafri People</h1>
+			</center>
+		</div>
+		
+		<div class="categories">
+			<center>
+				<h1>Our Mantra</h1>
+			</center>
+		</div>
+		
+		<div class="categories">
+			<center>
+				<h1>The Bigger Picture</h1>
 			</center>
 		</div>
 			
@@ -275,7 +314,8 @@
 			 @if(auth::user()->status == 5)
 			<sell-button :pid="product.id" :pname="product.name" :cid="product.category_id"></sell-button>
 			 @else
-			 <button>Hire @{{product.name}} Nearby</button>
+			 <button v-if="product.category_id==3" @click="findSeller(product.id, product.category_id)">Hire @{{product.name}}s Nearby</button>
+			 <button v-else @click="findSeller(product.id, product.category_id)">Buy @{{product.name}} Nearby</button>
 			 @endif
 			</div>
 			
@@ -287,6 +327,48 @@
 		</div>
 		
 	<!--End of Search-page class div-->
+	
+	
+	<!--Begin active-page class div-->
+		
+		<div id="active-page" class="welcome-search-page hidden" @click="hideActivePage()">
+		<div class="close">
+		x
+		</div>
+		<div class="active-message" v-for="product in activeProduct">
+		
+		<h2 v-if="product.category_id== 3" style="margin:10px;">People who are @{{product.name}}s Nearby</h2>
+		<h2 v-else style="margin:10px;">People selling @{{product.name}} Nearby</h2>
+		</div>
+		<div v-if="this.activeSellers.length==0" style="margin:10px;" >None nearby at the moment</div>
+		
+		<!-- Begin active Category Class -->
+		
+		<div class="categories">
+			
+			
+			<!-- Begin Users Class -->
+			
+			<div class="products" >
+			 <div  v-for="seller in activeSellers" @click.stop>
+			
+			 <img :src="seller.avatar" height="200px" width="300px"  :alt="seller.fname + ' ' + seller. lname" />
+			
+			 <div class="product-details">
+			 <h2> <b> @{{seller.fname + ' ' + seller. lname}} </b></h2>
+
+			 <button  @click="hireSeller(seller.id)">Patronise @{{seller.fname + ' ' + seller. lname}}</button>
+			
+			</div>
+			
+		</div>
+		<!-- End Users Class -->
+		</div>
+		</div>
+		<!-- End Search Category Class -->
+		</div>
+		
+	<!--End of active-page class div-->
 	 
 	 
 	 <!--Begin admin-category class div-->
